@@ -74,7 +74,7 @@ func doConn(conn *net.TCPConn) {
 	}
 
 	addrByte := []byte(addr.String())
-	l, err := net.Dial("tcp", "136.244.114.167:8102")
+	l, err := net.Dial("tcp", "111.231.252.16:8102")
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -106,8 +106,8 @@ func encodeSend(conn net.Conn, data []byte) (int, error) {
 
 func ioCopySend(local, dis net.Conn) (int, error) {
 	var data = make([]byte, 1024)
+	writeLen := 0
 	for {
-		writeLen := 0
 		dataLen, err := local.Read(data)
 		if err != nil {
 			return writeLen, err
@@ -129,8 +129,8 @@ func ioCopySend(local, dis net.Conn) (int, error) {
 
 func ioCopyRe(dis, local net.Conn) (int, error) {
 	var data = make([]byte, 1024)
+	writeLen := 0
 	for {
-		writeLen := 0
 		dataLen, err := dis.Read(data)
 		if err != nil {
 			return writeLen, err
