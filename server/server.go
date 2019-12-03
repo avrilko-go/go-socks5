@@ -52,8 +52,8 @@ func doConn(conn net.Conn) {
 
 func ioCopySend(local, dis net.Conn) (int, error) {
 	var data = make([]byte, 1024)
+	writeLen := 0
 	for {
-		writeLen := 0
 		dataLen, err := local.Read(data)
 		if err != nil {
 			return writeLen, err
@@ -75,8 +75,8 @@ func ioCopySend(local, dis net.Conn) (int, error) {
 
 func ioCopyRe(dis, local net.Conn) (int, error) {
 	var data = make([]byte, 1024)
+	writeLen := 0
 	for {
-		writeLen := 0
 		dataLen, err := dis.Read(data)
 		if err != nil {
 			return writeLen, err

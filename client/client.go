@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"socks5/util"
+	"strconv"
 )
 
 func main() {
@@ -52,29 +53,24 @@ func doConn(conn *net.TCPConn) {
 		return
 	}
 	netType := data[3]
-	dIp := make([]byte, 4)
+	dIp := ""
 	if netType == 0x01 { // ipv4
-		dIp = data[4 : 4+net.IPv4len]
+
+		dIp = net.IPv4(data[4], data[5], data[6], data[7]).String()
+	} else if netType == 0x04 { // ipv6
+		dIp = net.IP{data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12], data[13], data[14], data[15], data[16], data[17], data[18], data[19]}.String()
 	} else if netType == 0x03 { // host
 		hostLen := data[4]
 		host := data[5 : 5+hostLen]
-		ipAddr, err := net.ResolveIPAddr("ip", string(host))
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		dIp = ipAddr.IP
-	} else if netType == 0x04 { // ipv6
-		dIp = data[4 : 4+net.IPv6len]
+		dIp = string(host)
 	}
 
-	addr := &net.TCPAddr{
-		IP:   dIp,
-		Port: int(binary.BigEndian.Uint16(data[lenHost-2:])),
-	}
+	port := int(binary.BigEndian.Uint16(data[lenHost-2:]))
 
-	addrByte := []byte(addr.String())
-	l, err := net.Dial("tcp", "111.231.252.16:8102")
+	addrByte := []byte(net.JoinHostPort(dIp, strconv.Itoa(port)))
+	fmt.Println(string(addrByte))
+	l, err := net.Dial("tcp", "136.244.114.167:8102")
+	//l, err := net.Dial("tcp", "111.231.252.16:8102")
 	if err != nil {
 		fmt.Println(err)
 		return
